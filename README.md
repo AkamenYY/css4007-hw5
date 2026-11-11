@@ -50,7 +50,7 @@ python -m helpdesk part1 "My Wi-Fi password does not work." --variant with_clari
 # Part 2: call each tool directly, without the agent
 python -m helpdesk tools
 
-# Parts 2-3: the helpdesk (interactive; type /quit to exit, /history to see saved messages)
+# Parts 2-3: the helpdesk (interactive; type /quit to exit)
 python -m helpdesk chat --user demo-user-a --thread t1 --status normal
 
 # The same, sending messages from the command line (each -m is one user message)
@@ -58,23 +58,21 @@ python -m helpdesk chat --user demo-user-a --thread s06 --status normal \
   -m "Show me the Wi-Fi troubleshooting steps." \
   -m "I enabled Wi-Fi and forgot the saved network, but Campus-Demo still will not connect. Check whether Wi-Fi is down. If it is operating, prepare a ticket about this problem."
 
-# Print a saved conversation, draw the graphs, delete all memory
-python -m helpdesk show --thread s06
+# Draw the graphs (outputs/graphs.md), delete all memory
 python -m helpdesk graphs
 python -m helpdesk reset
 ```
 
-Options for `chat`: `--user` (invented id such as `demo-user-a`), `--thread` (conversation id), `--status` (`normal`, `wifi_outage`, `recovery_outage`, `status_unavailable`), `--log FILE` (append this run's trace as JSON), `-q` (shorter output), `--fake-model` (a **fake** rule-based model for a dry run without a key — not a result).
+Options for `chat`: `--user` (invented id such as `demo-user-a`), `--thread` (conversation id), `--status` (`normal`, `wifi_outage`, `recovery_outage`, `status_unavailable`), `--log FILE` (add this run's trace as one JSON line), `--short` (print only replies), `--fake-model` (a **fake** echo model used by the tests — not a result).
 
 ## 4. Run the supplied scenarios S01–S14
 
 ```bash
 python run_scenarios.py              # real model; writes outputs/S01.json ... outputs/S14.json
 python run_scenarios.py --only S11   # one scenario
-python run_scenarios.py --fake-model # dry run with the FAKE model; writes outputs/fake/ (git-ignored)
 ```
 
-The runner follows `data/scenarios.json`: `reset_before` deletes the memory folder; every group of messages is sent by a **separate** `python -m helpdesk chat` process, so `restart_process` really ends one process and starts another one on the same storage. Each log records the command, process id, snapshot, user, thread, nodes, tool requests and results, what was read from conversation state / user memory / reference files, the reply, ticket files and whether the loop limit was reached. `outputs/scenarios_summary.md` is a one-line-per-turn overview. Ticket drafts go to `outputs/tickets/<scenario>/`.
+The runner follows `data/scenarios.json`: `reset_before` deletes the memory folder; every group of messages is sent by a **separate** `python -m helpdesk chat` process, so `restart_process` really ends one process and starts another one on the same storage. Each log records the command, process id, snapshot, user, thread, nodes, the tools the model asked for and their results, what was read from conversation memory / user memory / reference files (`read_from`), the reply, ticket files and whether the loop limit was reached. `outputs/scenarios_summary.md` is a one-line-per-turn overview. Ticket drafts go to `outputs/tickets/<scenario>/`.
 
 ## 5. Where memory is saved and how to clear it
 
@@ -92,7 +90,7 @@ The folder is set by `HELPDESK_STORAGE_DIR` and is git-ignored. Start again with
 python -m pytest -v
 ```
 
-The tests use a clearly labelled **fake model** (`ScriptedFakeModel` in `helpdesk/models.py`) and temporary storage folders, so they need no API key and never touch `local-storage/`. GitHub Actions (`.github/workflows/tests.yml`) runs them on every push with Python 3.13. The real-model demonstration is separate (`run_scenarios.py`). What each test catches is listed in SUBMISSION.md, Part 4.
+The tests use clearly labelled **fake models** (`ScriptedFakeModel` and `EchoFakeModel` in `helpdesk/models.py`) and temporary storage folders, so they need no API key and never touch `local-storage/`. GitHub Actions (`.github/workflows/tests.yml`) runs them on every push with Python 3.13. The real-model demonstration is separate (`run_scenarios.py`). What each test catches is listed in SUBMISSION.md, Part 4.
 
 ## Project layout
 

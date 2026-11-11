@@ -12,5 +12,3 @@ __pycache__/
 *.sqlite3-*
 local-storage/
 
-# dry runs with the FAKE model are not results
-outputs/fake/

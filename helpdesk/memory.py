@@ -1,13 +1,13 @@
-"""Part 3: where memory lives.
+"""Part 3: where memory is saved.
 
-Two kinds of memory, two files under HELPDESK_STORAGE_DIR (default: local-storage/, git-ignored):
+Two kinds of memory, in two files inside local-storage/ (git-ignored):
 
-  conversations.sqlite  LangGraph SqliteSaver checkpointer. Key: thread_id.
-                        Holds one conversation's state: its messages (problem, steps tried, ...).
-  user_memory.sqlite    LangGraph SqliteStore. Namespace ("users", user_id), key "preferences".
-                        Holds the user's saved reply language, shared by all of that user's threads.
+  conversations.sqlite  CONVERSATION memory. LangGraph SqliteSaver (a checkpointer).
+                        One saved state per thread_id: the messages of that conversation.
+  user_memory.sqlite    USER memory. LangGraph SqliteStore.
+                        One record per user_id: the reply language. Shared by all threads of that user.
 
-Delete the folder (python -m helpdesk reset) to start again.
+`python -m helpdesk reset` deletes the folder.
 """
 import os
 import re
@@ -20,16 +20,10 @@ from langgraph.store.sqlite import SqliteStore
 
 from .data import ROOT
 
-LANGUAGES = {
-    "kazakh": "Kazakh", "қазақ": "Kazakh", "қазақша": "Kazakh", "қазақ тілінде": "Kazakh",
-    "russian": "Russian", "русском": "Russian", "русский": "Russian",
-    "english": "English", "английском": "English",
-}
-_LANG_WORDS = "|".join(sorted((re.escape(k) for k in LANGUAGES), key=len, reverse=True))
-PREFERENCE_PATTERN = re.compile(
-    r"\b(?:prefer|want|like)\s+(?:my\s+|your\s+)?(?:replies|answers|responses)\s+in\s+(" + _LANG_WORDS + r")\b"
-    r"|\b(?:reply|respond|answer|write)\s+(?:to\s+me\s+)?in\s+(" + _LANG_WORDS + r")\b",
-    re.IGNORECASE)
+LANGUAGES = ["Kazakh", "Russian", "English"]
+PREFERENCE = re.compile(
+    r"\b(?:prefer|want)\s+(?:replies|answers)\s+in\s+(kazakh|russian|english)\b"
+    r"|\b(?:reply|answer|respond)\s+(?:to\s+me\s+)?in\s+(kazakh|russian|english)\b", re.IGNORECASE)
 
 
 def storage_dir() -> Path:
@@ -45,56 +39,45 @@ def user_memory_path() -> Path:
     return storage_dir() / "user_memory.sqlite"
 
 
-def open_checkpointer(path=None) -> SqliteSaver:
-    path = Path(path or conversations_path())
-    path.parent.mkdir(parents=True, exist_ok=True)
-    saver = SqliteSaver(sqlite3.connect(str(path), check_same_thread=False))
+def open_checkpointer() -> SqliteSaver:
+    conversations_path().parent.mkdir(parents=True, exist_ok=True)
+    saver = SqliteSaver(sqlite3.connect(str(conversations_path()), check_same_thread=False))
     saver.setup()
     return saver
 
 
-def open_store(path=None) -> SqliteStore:
-    path = Path(path or user_memory_path())
-    path.parent.mkdir(parents=True, exist_ok=True)
-    store = SqliteStore(sqlite3.connect(str(path), check_same_thread=False, isolation_level=None))
+def open_store() -> SqliteStore:
+    user_memory_path().parent.mkdir(parents=True, exist_ok=True)
+    store = SqliteStore(sqlite3.connect(str(user_memory_path()), check_same_thread=False, isolation_level=None))
     store.setup()
     return store
 
 
-def close(*objects) -> None:
-    for obj in objects:
-        conn = getattr(obj, "conn", None)
-        if conn is not None:
-            conn.close()
+def close(*things) -> None:
+    for thing in things:
+        thing.conn.close()
 
 
 def reset_storage() -> Path:
-    """Delete all conversation checkpoints and user preferences."""
-    path = storage_dir()
-    if path.exists():
-        shutil.rmtree(path)
-    return path
+    """Delete all saved conversations and user preferences."""
+    if storage_dir().exists():
+        shutil.rmtree(storage_dir())
+    return storage_dir()
 
 
 def parse_language_preference(text: str):
     """'Please remember that I prefer replies in Kazakh' -> 'Kazakh'. None if no preference is stated."""
-    match = PREFERENCE_PATTERN.search(text or "")
-    if not match:
-        return None
-    word = (match.group(1) or match.group(2)).lower()
-    return LANGUAGES.get(word)
-
-
-USER_NAMESPACE = "users"
+    match = PREFERENCE.search(text or "")
+    return (match.group(1) or match.group(2)).capitalize() if match else None
 
 
 def read_preferences(store, user_id: str) -> dict:
-    item = store.get((USER_NAMESPACE, user_id), "preferences")
+    item = store.get(("users", user_id), "preferences")
     return dict(item.value) if item else {}
 
 
 def save_language(store, user_id: str, language: str) -> dict:
     prefs = read_preferences(store, user_id)
     prefs["language"] = language
-    store.put((USER_NAMESPACE, user_id), "preferences", prefs)
+    store.put(("users", user_id), "preferences", prefs)
     return prefs

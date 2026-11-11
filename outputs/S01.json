@@ -4,8 +4,8 @@
   "part": 1,
   "status_profile": "normal",
   "reset_before": true,
-  "model": "none (Part 1 graph)",
-  "storage_dir": "local-storage/ (git-ignored)",
+  "model": "none (Part 1 has no model)",
+  "memory_storage": "local-storage/ (not in git)",
   "graph_variant": "original",
   "runs": [
     {

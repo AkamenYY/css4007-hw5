@@ -36,7 +36,7 @@ def test_conversation_survives_a_real_process_restart(storage):
     env = dict(os.environ)
     log = storage / "run.jsonl"
     base = [sys.executable, "-m", "helpdesk", "chat", "--fake-model", "--user", "demo-user-a",
-            "--thread", "restart-a", "--log", str(log), "-q"]
+            "--thread", "restart-a", "--log", str(log), "--short"]
     subprocess.run(base + ["-m", "My issue is Wi-Fi. I enabled it and tried reconnecting."],
                    cwd=ROOT, env=env, check=True, capture_output=True)
     subprocess.run(base + ["-m", "Which problem and steps did we discuss?"],

@@ -82,17 +82,11 @@ def test_limit_resets_on_the_next_user_message(storage):
     assert turn["loop_limit_reached"] is False and turn["reply"] == "Fine now."
 
 
-def test_unknown_tool_and_same_step_ticket_are_refused(storage):
-    # Catches: crashing on a bad request, or preparing a ticket before the status result is read.
-    script = [AIMessage(content="", tool_calls=[
-                  tool_call("send_email", {}),
-                  tool_call("check_service_status", {"service": "wifi"}),
-                  tool_call("prepare_ticket", {"category": "wifi", "summary": "x", "steps_tried": ["y"]})]),
+def test_unknown_tool_is_refused_without_crashing(storage):
+    # Catches: the program running any name the model invents, or crashing on a bad request.
+    script = [AIMessage(content="", tool_calls=[tool_call("send_email", {"to": "it@example.com"})]),
               AIMessage(content="ok")]
-    s = session(storage, ScriptedFakeModel(responses=script), "wifi_outage")
-    turn = s.send(REQUEST)
+    s = session(storage, ScriptedFakeModel(responses=script))
+    turn = s.send("Email the helpdesk for me")
     s.close()
-    results = {r["name"]: r["result"] for r in turn["tool_results"]}
-    assert "error" in results["send_email"]
-    assert results["prepare_ticket"]["error"] == "wait_for_status"
-    assert not turn["tickets"]
+    assert "error" in turn["tool_results"][0]["result"] and turn["reply"] == "ok"

@@ -1,6 +1,6 @@
 [
   {
-    "tool": "find_instructions",
+    "call": "find_instructions('wifi')",
     "result": {
       "topic": "wifi",
       "instruction_id": "GUIDE-WIFI",
@@ -15,13 +15,13 @@
     }
   },
   {
-    "tool": "find_instructions",
+    "call": "find_instructions('printer')",
     "result": {
       "error": "no instructions for 'printer'. Available topics: wifi, password"
     }
   },
   {
-    "tool": "check_service_status",
+    "call": "check_service_status('wifi', 'wifi_outage')",
     "result": {
       "service": "wifi",
       "status": "outage",
@@ -32,21 +32,21 @@
     }
   },
   {
-    "tool": "check_service_status",
+    "call": "check_service_status('wifi', 'status_unavailable')",
     "result": {
-      "service": "account_recovery",
+      "service": "wifi",
       "status": "unknown",
-      "message": "The demo account-recovery status source is unavailable.",
+      "message": "The demo Wi-Fi status source is unavailable.",
       "status_profile": "status_unavailable",
       "source": "data/service_status.json",
       "repair_time": null
     }
   },
   {
-    "tool": "prepare_ticket",
+    "call": "prepare_ticket(full details)",
     "result": {
-      "ticket_id": "TKT-DEMO-20261111191826-463a",
-      "file": "outputs/tickets/direct/TKT-DEMO-20261111191826-463a.json",
+      "ticket_id": "TKT-DEMO-20261111192254-40c0",
+      "file": "outputs/tickets/direct/TKT-DEMO-20261111192254-40c0.json",
       "status": "draft",
       "service_status": "operational",
       "sent": false,
@@ -54,7 +54,7 @@
     }
   },
   {
-    "tool": "prepare_ticket",
+    "call": "prepare_ticket(no details)",
     "result": {
       "error": "missing_information",
       "missing": [
