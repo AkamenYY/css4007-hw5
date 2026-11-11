@@ -140,13 +140,40 @@ The model asks for **one tool at a time** (`parallel_tool_calls=False`). That wa
 
 **4. What is different from Part 1?** In Part 1, my keyword rules choose the route, so the same input always takes the same path. In Part 2, the edge still decides, but it decides from the **model's output**: the model chooses which tools, in what order, and when to stop, based on the conversation and on the tool results. The same request can take different paths when the data changes (see S06, S07, S08 below).
 
-### An actual run with several tools
+### An actual run with several tools (S06, real model)
 
-TODO (after the real run): S06 turn 2 — model requests, tool results and final answer, copied from `outputs/S06.json`.
+Command: `python run_scenarios.py` → `python -m helpdesk chat --user demo-user-a --thread s06 --status normal -m "Show me the Wi-Fi troubleshooting steps." -m "I enabled Wi-Fi and forgot the saved network, ... If it is operating, prepare a ticket about this problem."` Log: [outputs/S06.json](outputs/S06.json).
+
+Turn 1: the model asked for `find_instructions({"topic": "wifi"})` and answered with the 4 GUIDE-WIFI steps.
+
+Turn 2 (from the log, in order):
+
+```text
+load_memory  tool_rounds = 0; conversation memory has 4 earlier messages; no user memory
+agent        MODEL ASKS   check_service_status({"service": "wifi"})
+tools        RESULT       {"status": "operational", "message": "The demo Wi-Fi service has no reported outage."}
+agent        MODEL ASKS   prepare_ticket({"category": "wifi",
+                            "summary": "Campus-Demo will not connect even though Wi-Fi is enabled.",
+                            "steps_tried": ["Enabled Wi-Fi.", "Forgot the saved network."]})
+tools        RESULT       {"ticket_id": "TKT-DEMO-20261111200057-71b9",
+                           "file": "outputs/tickets/S06/TKT-DEMO-20261111200057-71b9.json", "sent": false}
+agent        ANSWER       "Wi-Fi is operational with no reported outage. I prepared a local ticket draft
+                           using the steps you reported ... It was not sent to the helpdesk."
+```
+
+The model asked for the ticket **only after** it saw `operational`. The ticket ([file](outputs/tickets/S06/TKT-DEMO-20261111200057-71b9.json)) has only the two steps the user said, `service_status: "operational"` (taken by my program from the status result) and `reference_ids: ["GUIDE-WIFI"]` (from turn 1). 2 tool rounds; the limit (4) was not reached.
 
 ### Same request, three snapshots
 
-TODO (after the real run): S06 (`normal`) vs S07 (`wifi_outage`) vs S08 (`status_unavailable`).
+The request is the same in all three: "check whether Wi-Fi is down; if it is operating, prepare a ticket". Only `--status` changes.
+
+| Scenario | Snapshot | Tools the model asked for | Status result | What it did |
+| --- | --- | --- | --- | --- |
+| [S06](outputs/S06.json) | `normal` | check_service_status → prepare_ticket | operational | made the ticket draft |
+| [S07](outputs/S07.json) | `wifi_outage` | find_instructions → check_service_status | outage | "Wi-Fi is currently experiencing a campus-wide outage. I did not prepare a ticket because the service is not operating. No repair time is available." |
+| [S08](outputs/S08.json) | `status_unavailable` | check_service_status | unknown | "Wi-Fi status could not be checked ... I did not prepare a ticket. Would you like a local ticket draft stating that the status could not be checked?" |
+
+So the action depends on the tool result: one ticket, no ticket, or a question. No repair time was invented. In S14 (`recovery_outage`) the model checked `account_recovery`, not Wi-Fi, and reported the outage with "No repair time is available".
 
 ---
 
@@ -170,20 +197,24 @@ TODO (after the real run): S06 (`normal`) vs S07 (`wifi_outage`) vs S08 (`status
 
 **Retrieval vs memory.** Looking up Wi-Fi instructions is **retrieval**: `find_instructions` reads the fixed reference file `data/helpdesk.json`, and every user gets the same answer. Recalling the user's language is **memory**: it was learned from this user's own message, saved by my program, and only this user gets it back later.
 
-### Demonstrations
+### Demonstrations (real model, `python run_scenarios.py`)
 
-TODO (after the real run): fill from `outputs/S10.json`–`outputs/S13.json`.
+Every message group is a separate `python -m helpdesk chat ...` process. The process ids in the logs prove the restarts.
 
 | Situation | Command used | Log file | What happened |
 | --- | --- | --- | --- |
-| Refer to an earlier message | | outputs/S10.json | |
-| Close, restart and resume | | outputs/S11.json | |
-| Same user, new conversation | | outputs/S12.json | |
-| Different user | | outputs/S13.json | |
+| Refer to an earlier message | one process (pid 8937), thread `s10`: `-m "I cannot connect to Wi-Fi. I enabled it and forgot the saved network, but reconnecting failed." -m "Which steps did I already try?"` | [S10](outputs/S10.json) | Second answer: "You already tried: Enabling Wi-Fi, Forgetting the saved network, Reconnecting, which failed". **Read from:** conversation memory (6 earlier messages of thread `s10`). No tools were needed. |
+| Close, restart and resume | process 8940, then a **new** process 8943, both `--thread restart-a` | [S11](outputs/S11.json) | The new process started with "this thread already has 4 saved messages". Answer (in Kazakh): problem "Wi‑Fi желісіне қосыла алмау" (cannot connect to Wi-Fi); steps tried: enabled Wi-Fi, tried reconnecting. It even separated the steps it had *suggested* from the steps the user *did*. **Read from:** conversation memory (4 messages) + user memory (Kazakh). The old text was not typed again. |
+| Same user, new conversation | process 8946 thread `preference-a1`, then new process 8949 thread `preference-a2` | [S12](outputs/S12.json) | In the new thread: "Сіз жауаптарды қазақ тілінде беруді сұрадыңыз" (you asked for replies in Kazakh) + the list of what it can help with. **Read from:** user memory `{'language': 'Kazakh'}`; conversation memory: "new thread, nothing earlier" (no replay of the old thread). |
+| Different user | `--user demo-user-a --thread isolation-a`, then `--user demo-user-b --thread isolation-b` | [S13](outputs/S13.json) | demo-user-b got (in English): "No. In this conversation, you haven't told me a preferred language or a previous problem." **Read from:** user memory: nothing saved for `demo-user-b`; new thread. demo-user-a's Kazakh preference did not appear. |
+
+In the first message of S11, S12 and S13 the trace shows `user memory: SAVED {'language': 'Kazakh'}`: this is where `load_memory` wrote the preference.
 
 ---
 
 ## Part 4 — Running and checking my work
+
+- **Python used for all saved runs:** 3.13.18 (recorded in every log under `process.python`). Tests: `45 passed`.
 
 - **Setup:** README sections 1–3 (Python 3.13, `pip install -r requirements.txt`, `.env`).
 - **Versions:** `requirements.txt` pins `langgraph==1.2.20`, `langgraph-checkpoint-sqlite==3.1.3`, `langchain-core==1.8.0`, `langchain-openai==1.7.4` and the others.
@@ -205,8 +236,11 @@ TODO (after the real run): fill from `outputs/S10.json`–`outputs/S13.json`.
 - **SQLite for both memories.** It is one local file each, needs no server, survives a restart, and the package was supplied. I keep conversations (checkpointer) and preferences (store) in separate files, so it is clear which memory is which and both can be cleared together.
 - **The preference is found by a simple rule** (a regular expression for "prefer replies in / reply in" + Kazakh, Russian or English). It is predictable and testable, but it misses other wordings (for example "қазақша жаз").
 - **The model decides the conditions** ("only if operating"). My program makes it safer (one tool at a time, the ticket status comes from the real status result, tickets need the user's steps), but a model could still make a wrong choice. A stricter version would check the condition in code.
-- **The model writes the ticket summary and steps** from the conversation. They can be worded differently from the user's message.
-- The real-model wording changes between runs; the logs show one run.
+- **The model writes the ticket summary and steps** from the conversation, so the wording differs a little from the user's message (for example "Enabled Wi-Fi." instead of "I enabled Wi-Fi").
+- **The model sometimes calls an extra tool.** In S07 it looked up the instructions before checking the status. This is harmless, but it costs one more round.
+- **The model can do more than it was asked.** In my first full run (S10) it made a ticket without being asked. A prompt rule fixed it, but a rule in a prompt is not a guarantee; a stricter version would allow `prepare_ticket` only when the user's message asks for a ticket.
+- **The answer to demo-user-b (S13) talks about "this conversation" only.** It is correct (nothing is saved for that user), but it could also say clearly that no user memory exists.
+- The real-model wording changes between runs; the logs show my final run (after commit f0c9cb3).
 
 ---
 
@@ -221,12 +255,12 @@ All logs: `outputs/S01.json` … `outputs/S14.json`. Overview: `outputs/scenario
 | S03 — Unsupported request | `--only S03` | [S03](outputs/S03.json) | read_request → other_help; asks Wi-Fi or password. |
 | S04 — Two topics before the graph change | `--only S04` (variant original) | [S04](outputs/S04.json) | read_request → wifi_help; the password part is lost because the Wi-Fi rule is first. |
 | S05 — Two topics after adding clarification | `--only S05` (variant with_clarification) | [S05](outputs/S05.json) | read_request (category both) → clarify_problem; asks which problem first. |
-| S06 — Instructions then local ticket | TODO | | |
-| S07 — The same request during a Wi-Fi outage | TODO | | |
-| S08 — Status source unavailable | TODO | | |
-| S09 — Missing ticket details | TODO | | |
-| S10 — Use the current conversation | TODO | | |
-| S11 — Persist and recall after restart | TODO | | |
-| S12 — Preference across threads without replay | TODO | | |
-| S13 — Do not share memory between users | TODO | | |
-| S14 — Password recovery outage | TODO | | |
+| S06 — Instructions then local ticket | `python run_scenarios.py` (thread s06, `normal`, one process, 2 messages) | [S06](outputs/S06.json) | Turn 1: find_instructions → 4 steps. Turn 2: check_service_status (operational) → prepare_ticket → local draft [TKT-DEMO-20261111200057-71b9](outputs/tickets/S06/TKT-DEMO-20261111200057-71b9.json) with only the user's 2 steps; "not sent". |
+| S07 — The same request during a Wi-Fi outage | same request, `--status wifi_outage` | [S07](outputs/S07.json) | find_instructions → check_service_status (outage) → no ticket: "I did not prepare a ticket because the service is not operating. No repair time is available." |
+| S08 — Status source unavailable | `--status status_unavailable` | [S08](outputs/S08.json) | check_service_status (unknown) → no ticket; asks "Would you like a local ticket draft stating that the status could not be checked?" |
+| S09 — Missing ticket details | thread s09, 2 messages | [S09](outputs/S09.json) | Turn 1: no tool; asks for the problem and steps tried. Turn 2: prepare_ticket with "Enabled Wi-Fi", "Tried reconnecting" → [draft](outputs/tickets/S09/TKT-DEMO-20261111200110-d4d5.json) with `service_status: not_checked` (status was not checked, and the ticket says so). |
+| S10 — Use the current conversation | thread s10, 2 messages, one process | [S10](outputs/S10.json) | Lists the 3 steps tried from the earlier message. **Change I made:** in my first run the model made a ticket in turn 1 without being asked; I added the rule "Prepare a ticket only when the user asks for one" (commit f0c9cb3) and re-ran all scenarios. Now it only offers a ticket. |
+| S11 — Persist and recall after restart | 2 processes (8940, 8943), thread restart-a | [S11](outputs/S11.json) | Preference saved; after restart the thread had 4 saved messages; answer in Kazakh with the problem and the user's steps. |
+| S12 — Preference across threads without replay | 2 processes, threads preference-a1 → preference-a2 | [S12](outputs/S12.json) | New thread, no earlier messages, but user memory gave Kazakh; answered in Kazakh and listed what it can help with. |
+| S13 — Do not share memory between users | demo-user-a/isolation-a, then demo-user-b/isolation-b | [S13](outputs/S13.json) | demo-user-b: nothing in user memory, new thread; answered in English that no preference or problem was told. |
+| S14 — Password recovery outage | `--status recovery_outage` | [S14](outputs/S14.json) | check_service_status(**account_recovery**) → outage; "there is a known problem. No repair time is available." No invented repair time. |
