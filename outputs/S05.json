@@ -1,0 +1,50 @@
+{
+  "scenario": "S05",
+  "title": "Two topics after adding clarification",
+  "part": 1,
+  "status_profile": "normal",
+  "reset_before": true,
+  "model": "none (Part 1 graph)",
+  "storage_dir": "local-storage/ (git-ignored)",
+  "graph_variant": "with_clarification",
+  "runs": [
+    {
+      "variant": "with_clarification",
+      "message": "My Wi-Fi password does not work.",
+      "route": [
+        "read_request",
+        "clarify_problem"
+      ],
+      "trace": [
+        {
+          "node": "read_request",
+          "update": {
+            "category": "both"
+          },
+          "state_after": {
+            "message": "My Wi-Fi password does not work.",
+            "category": "both"
+          }
+        },
+        {
+          "node": "clarify_problem",
+          "update": {
+            "reply": "Your message mentions both Wi-Fi and a password. Which should we solve first: connecting to Wi-Fi, or recovering your account password?"
+          },
+          "state_after": {
+            "message": "My Wi-Fi password does not work.",
+            "category": "both",
+            "reply": "Your message mentions both Wi-Fi and a password. Which should we solve first: connecting to Wi-Fi, or recovering your account password?"
+          }
+        }
+      ],
+      "final_state": {
+        "message": "My Wi-Fi password does not work.",
+        "category": "both",
+        "reply": "Your message mentions both Wi-Fi and a password. Which should we solve first: connecting to Wi-Fi, or recovering your account password?"
+      },
+      "user_id": "demo-user-a",
+      "thread_id": "s05"
+    }
+  ]
+}

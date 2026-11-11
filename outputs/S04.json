@@ -1,0 +1,50 @@
+{
+  "scenario": "S04",
+  "title": "Two topics before the graph change",
+  "part": 1,
+  "status_profile": "normal",
+  "reset_before": true,
+  "model": "none (Part 1 graph)",
+  "storage_dir": "local-storage/ (git-ignored)",
+  "graph_variant": "original",
+  "runs": [
+    {
+      "variant": "original",
+      "message": "My Wi-Fi password does not work.",
+      "route": [
+        "read_request",
+        "wifi_help"
+      ],
+      "trace": [
+        {
+          "node": "read_request",
+          "update": {
+            "category": "wifi"
+          },
+          "state_after": {
+            "message": "My Wi-Fi password does not work.",
+            "category": "wifi"
+          }
+        },
+        {
+          "node": "wifi_help",
+          "update": {
+            "reply": "Connect to the practice campus network (GUIDE-WIFI):\n1. Check that Wi-Fi is enabled and airplane mode is off.\n2. Select the fictional Campus-Demo network.\n3. If connection fails, forget the saved network and try connecting again.\n4. If the problem remains, check the service status before preparing a ticket."
+          },
+          "state_after": {
+            "message": "My Wi-Fi password does not work.",
+            "category": "wifi",
+            "reply": "Connect to the practice campus network (GUIDE-WIFI):\n1. Check that Wi-Fi is enabled and airplane mode is off.\n2. Select the fictional Campus-Demo network.\n3. If connection fails, forget the saved network and try connecting again.\n4. If the problem remains, check the service status before preparing a ticket."
+          }
+        }
+      ],
+      "final_state": {
+        "message": "My Wi-Fi password does not work.",
+        "category": "wifi",
+        "reply": "Connect to the practice campus network (GUIDE-WIFI):\n1. Check that Wi-Fi is enabled and airplane mode is off.\n2. Select the fictional Campus-Demo network.\n3. If connection fails, forget the saved network and try connecting again.\n4. If the problem remains, check the service status before preparing a ticket."
+      },
+      "user_id": "demo-user-a",
+      "thread_id": "s04"
+    }
+  ]
+}
