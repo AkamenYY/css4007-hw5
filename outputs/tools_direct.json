@@ -1,0 +1,67 @@
+[
+  {
+    "tool": "find_instructions",
+    "result": {
+      "topic": "wifi",
+      "instruction_id": "GUIDE-WIFI",
+      "title": "Connect to the practice campus network",
+      "steps": [
+        "Check that Wi-Fi is enabled and airplane mode is off.",
+        "Select the fictional Campus-Demo network.",
+        "If connection fails, forget the saved network and try connecting again.",
+        "If the problem remains, check the service status before preparing a ticket."
+      ],
+      "source": "data/helpdesk.json"
+    }
+  },
+  {
+    "tool": "find_instructions",
+    "result": {
+      "error": "no instructions for 'printer'. Available topics: wifi, password"
+    }
+  },
+  {
+    "tool": "check_service_status",
+    "result": {
+      "service": "wifi",
+      "status": "outage",
+      "message": "The demo Wi-Fi service is unavailable across campus. The fixture gives no repair time.",
+      "status_profile": "wifi_outage",
+      "source": "data/service_status.json",
+      "repair_time": null
+    }
+  },
+  {
+    "tool": "check_service_status",
+    "result": {
+      "service": "account_recovery",
+      "status": "unknown",
+      "message": "The demo account-recovery status source is unavailable.",
+      "status_profile": "status_unavailable",
+      "source": "data/service_status.json",
+      "repair_time": null
+    }
+  },
+  {
+    "tool": "prepare_ticket",
+    "result": {
+      "ticket_id": "TKT-DEMO-20261111191826-463a",
+      "file": "outputs/tickets/direct/TKT-DEMO-20261111191826-463a.json",
+      "status": "draft",
+      "service_status": "operational",
+      "sent": false,
+      "note": "Local draft only; nothing was sent to a helpdesk."
+    }
+  },
+  {
+    "tool": "prepare_ticket",
+    "result": {
+      "error": "missing_information",
+      "missing": [
+        "problem description",
+        "steps already tried"
+      ],
+      "ask_user": "Ask the user for: problem description, steps already tried. Do not invent them."
+    }
+  }
+]
