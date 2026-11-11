@@ -12,9 +12,9 @@
       "new_process_after_restart": false,
       "exit_code": 0,
       "process": {
-        "pid": 8847,
+        "pid": 8952,
         "python": "3.13.18",
-        "started_at": "2026-11-11T19:47:43+00:00"
+        "started_at": "2026-11-11T20:01:30+00:00"
       },
       "turns": [
         {
@@ -25,8 +25,6 @@
           "user_message": "Please remember that I prefer replies in Kazakh. I have a Wi-Fi problem.",
           "nodes": [
             "load_memory",
-            "agent",
-            "tools",
             "agent"
           ],
           "steps": [
@@ -54,81 +52,14 @@
                 "messages": [
                   {
                     "type": "ai",
-                    "content": "",
-                    "tool_calls": [
-                      {
-                        "name": "find_instructions",
-                        "args": {
-                          "topic": "wifi"
-                        }
-                      }
-                    ]
-                  }
-                ]
-              }
-            },
-            {
-              "node": "tools",
-              "update": {
-                "messages": [
-                  {
-                    "type": "tool",
-                    "content": {
-                      "topic": "wifi",
-                      "instruction_id": "GUIDE-WIFI",
-                      "title": "Connect to the practice campus network",
-                      "steps": [
-                        "Check that Wi-Fi is enabled and airplane mode is off.",
-                        "Select the fictional Campus-Demo network.",
-                        "If connection fails, forget the saved network and try connecting again.",
-                        "If the problem remains, check the service status before preparing a ticket."
-                      ],
-                      "source": "data/helpdesk.json"
-                    },
-                    "name": "find_instructions"
-                  }
-                ],
-                "tool_rounds": 1,
-                "tickets": []
-              }
-            },
-            {
-              "node": "agent",
-              "update": {
-                "messages": [
-                  {
-                    "type": "ai",
-                    "content": "Әрине, бұдан былай қазақ тілінде жауап беремін.\n\nWi‑Fi мәселесі үшін мына қадамдарды орындаңыз:\n\n1. Wi‑Fi қосулы, ал ұшақ режимі өшірулі екенін тексеріңіз.\n2. **Campus-Demo** желісін таңдаңыз.\n3. Қосылмаса, сақталған желіні өшіріп, қайта қосылып көріңіз.\n4. Мәселе шешілмесе, қызмет күйін тексеруге болады."
+                    "content": "Түсіндім, бұдан былай қазақша жауап беремін. Wi‑Fi мәселесі бойынша көмектесемін. Мәселе нақты қалай болып жатыр: желі көрінбей ме, қосылмай ма, әлде қосылғанымен интернет жұмыс істемей ме?"
                   }
                 ]
               }
             }
           ],
-          "tool_requests": [
-            {
-              "name": "find_instructions",
-              "args": {
-                "topic": "wifi"
-              }
-            }
-          ],
-          "tool_results": [
-            {
-              "name": "find_instructions",
-              "result": {
-                "topic": "wifi",
-                "instruction_id": "GUIDE-WIFI",
-                "title": "Connect to the practice campus network",
-                "steps": [
-                  "Check that Wi-Fi is enabled and airplane mode is off.",
-                  "Select the fictional Campus-Demo network.",
-                  "If connection fails, forget the saved network and try connecting again.",
-                  "If the problem remains, check the service status before preparing a ticket."
-                ],
-                "source": "data/helpdesk.json"
-              }
-            }
-          ],
+          "tool_requests": [],
+          "tool_results": [],
           "memory": {
             "user_id": "demo-user-a",
             "user_memory_written": {
@@ -142,12 +73,11 @@
           "read_from": [
             "conversation memory: new thread 'isolation-a', nothing earlier",
             "user memory: SAVED {'language': 'Kazakh'} for 'demo-user-a'",
-            "user memory: {'language': 'Kazakh'} for 'demo-user-a'",
-            "reference file: data/helpdesk.json (via find_instructions)"
+            "user memory: {'language': 'Kazakh'} for 'demo-user-a'"
           ],
-          "reply": "Әрине, бұдан былай қазақ тілінде жауап беремін.\n\nWi‑Fi мәселесі үшін мына қадамдарды орындаңыз:\n\n1. Wi‑Fi қосулы, ал ұшақ режимі өшірулі екенін тексеріңіз.\n2. **Campus-Demo** желісін таңдаңыз.\n3. Қосылмаса, сақталған желіні өшіріп, қайта қосылып көріңіз.\n4. Мәселе шешілмесе, қызмет күйін тексеруге болады.",
+          "reply": "Түсіндім, бұдан былай қазақша жауап беремін. Wi‑Fi мәселесі бойынша көмектесемін. Мәселе нақты қалай болып жатыр: желі көрінбей ме, қосылмай ма, әлде қосылғанымен интернет жұмыс істемей ме?",
           "tickets": [],
-          "tool_rounds": 1,
+          "tool_rounds": 0,
           "loop_limit_reached": false
         }
       ],
@@ -158,9 +88,9 @@
       "new_process_after_restart": false,
       "exit_code": 0,
       "process": {
-        "pid": 8850,
+        "pid": 8955,
         "python": "3.13.18",
-        "started_at": "2026-11-11T19:47:47+00:00"
+        "started_at": "2026-11-11T20:01:33+00:00"
       },
       "turns": [
         {
@@ -194,7 +124,7 @@
                 "messages": [
                   {
                     "type": "ai",
-                    "content": "No. I don’t have a preferred language or previous problem recorded for you in this conversation, and no user memory is saved."
+                    "content": "No. In this conversation, you haven’t told me a preferred language or a previous problem."
                   }
                 ]
               }
@@ -212,7 +142,7 @@
             "conversation memory: new thread 'isolation-b', nothing earlier",
             "user memory: nothing saved for 'demo-user-b'"
           ],
-          "reply": "No. I don’t have a preferred language or previous problem recorded for you in this conversation, and no user memory is saved.",
+          "reply": "No. In this conversation, you haven’t told me a preferred language or a previous problem.",
           "tickets": [],
           "tool_rounds": 0,
           "loop_limit_reached": false

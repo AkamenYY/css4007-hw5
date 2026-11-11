@@ -1,0 +1,17 @@
+{
+  "ticket": {
+    "ticket_id": "TKT-DEMO-20261111200110-d4d5",
+    "status": "draft",
+    "user_id": "demo-user-a",
+    "thread_id": "s09",
+    "category": "wifi",
+    "summary": "Wi-Fi still fails after being enabled and attempting to reconnect.",
+    "steps_tried": [
+      "Enabled Wi-Fi",
+      "Tried reconnecting"
+    ],
+    "service_status": "not_checked",
+    "status_profile": "normal",
+    "reference_ids": []
+  }
+}

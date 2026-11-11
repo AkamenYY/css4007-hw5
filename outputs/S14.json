@@ -12,9 +12,9 @@
       "new_process_after_restart": false,
       "exit_code": 0,
       "process": {
-        "pid": 8853,
+        "pid": 8958,
         "python": "3.13.18",
-        "started_at": "2026-11-11T19:47:50+00:00"
+        "started_at": "2026-11-11T20:01:35+00:00"
       },
       "turns": [
         {
@@ -90,7 +90,7 @@
                 "messages": [
                   {
                     "type": "ai",
-                    "content": "The password recovery service is currently experiencing an outage, so the recovery page is unavailable. This is a known service problem. No repair time is available."
+                    "content": "The password recovery service is currently experiencing an outage, so there is a known problem. No repair time is available."
                   }
                 ]
               }
@@ -128,7 +128,7 @@
             "user memory: nothing saved for 'demo-user-a'",
             "reference file: data/service_status.json (via check_service_status)"
           ],
-          "reply": "The password recovery service is currently experiencing an outage, so the recovery page is unavailable. This is a known service problem. No repair time is available.",
+          "reply": "The password recovery service is currently experiencing an outage, so there is a known problem. No repair time is available.",
           "tickets": [],
           "tool_rounds": 1,
           "loop_limit_reached": false

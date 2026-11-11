@@ -1,14 +1,14 @@
 {
   "ticket": {
-    "ticket_id": "TKT-DEMO-20261111194720-fc6b",
+    "ticket_id": "TKT-DEMO-20261111200057-71b9",
     "status": "draft",
     "user_id": "demo-user-a",
-    "thread_id": "s09",
+    "thread_id": "s06",
     "category": "wifi",
-    "summary": "Wi-Fi remains unavailable after enabling Wi-Fi and trying to reconnect.",
+    "summary": "Campus-Demo will not connect even though Wi-Fi is enabled.",
     "steps_tried": [
-      "Enabled Wi-Fi",
-      "Tried reconnecting"
+      "Enabled Wi-Fi.",
+      "Forgot the saved network."
     ],
     "service_status": "operational",
     "status_profile": "normal",

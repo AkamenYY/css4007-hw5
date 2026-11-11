@@ -12,9 +12,9 @@
       "new_process_after_restart": false,
       "exit_code": 0,
       "process": {
-        "pid": 8818,
+        "pid": 8923,
         "python": "3.13.18",
-        "started_at": "2026-11-11T19:46:58+00:00"
+        "started_at": "2026-11-11T20:00:51+00:00"
       },
       "turns": [
         {
@@ -94,7 +94,7 @@
                 "messages": [
                   {
                     "type": "ai",
-                    "content": "Wi‑Fi troubleshooting steps:\n\n1. Make sure Wi‑Fi is enabled and airplane mode is off.\n2. Select the fictional **Campus-Demo** network.\n3. If the connection fails, forget the saved network and try connecting again.\n4. If the problem persists, check the service status before preparing a ticket."
+                    "content": "Wi-Fi troubleshooting steps:\n\n1. Check that Wi-Fi is enabled and airplane mode is off.\n2. Select the fictional **Campus-Demo** network.\n3. If connection fails, forget the saved network and try connecting again.\n4. If the problem remains, check the service status before preparing a ticket."
                   }
                 ]
               }
@@ -136,7 +136,7 @@
             "user memory: nothing saved for 'demo-user-a'",
             "reference file: data/helpdesk.json (via find_instructions)"
           ],
-          "reply": "Wi‑Fi troubleshooting steps:\n\n1. Make sure Wi‑Fi is enabled and airplane mode is off.\n2. Select the fictional **Campus-Demo** network.\n3. If the connection fails, forget the saved network and try connecting again.\n4. If the problem persists, check the service status before preparing a ticket.",
+          "reply": "Wi-Fi troubleshooting steps:\n\n1. Check that Wi-Fi is enabled and airplane mode is off.\n2. Select the fictional **Campus-Demo** network.\n3. If connection fails, forget the saved network and try connecting again.\n4. If the problem remains, check the service status before preparing a ticket.",
           "tickets": [],
           "tool_rounds": 1,
           "loop_limit_reached": false
@@ -222,10 +222,10 @@
                         "name": "prepare_ticket",
                         "args": {
                           "category": "wifi",
-                          "summary": "Campus-Demo will not connect despite Wi-Fi being enabled and the saved network being forgotten.",
+                          "summary": "Campus-Demo will not connect even though Wi-Fi is enabled.",
                           "steps_tried": [
-                            "Enabled Wi-Fi",
-                            "Forgot the saved network"
+                            "Enabled Wi-Fi.",
+                            "Forgot the saved network."
                           ]
                         }
                       }
@@ -241,8 +241,8 @@
                   {
                     "type": "tool",
                     "content": {
-                      "ticket_id": "TKT-DEMO-20261111194704-79d0",
-                      "file": "outputs/tickets/S06/TKT-DEMO-20261111194704-79d0.json",
+                      "ticket_id": "TKT-DEMO-20261111200057-71b9",
+                      "file": "outputs/tickets/S06/TKT-DEMO-20261111200057-71b9.json",
                       "status": "draft",
                       "service_status": "operational",
                       "sent": false,
@@ -253,7 +253,7 @@
                 ],
                 "tool_rounds": 2,
                 "tickets": [
-                  "outputs/tickets/S06/TKT-DEMO-20261111194704-79d0.json"
+                  "outputs/tickets/S06/TKT-DEMO-20261111200057-71b9.json"
                 ]
               }
             },
@@ -263,7 +263,7 @@
                 "messages": [
                   {
                     "type": "ai",
-                    "content": "Wi‑Fi is operational with no reported outage.\n\nI prepared a local ticket draft about Campus-Demo not connecting. It was **not sent**.\n\nFile: `outputs/tickets/S06/TKT-DEMO-20261111194704-79d0.json`"
+                    "content": "Wi-Fi is operational with no reported outage.\n\nI prepared a local ticket draft using the steps you reported:\n- Enabled Wi-Fi\n- Forgot the saved network\n\n**File:** `outputs/tickets/S06/TKT-DEMO-20261111200057-71b9.json`  \nIt was **not sent** to the helpdesk."
                   }
                 ]
               }
@@ -280,10 +280,10 @@
               "name": "prepare_ticket",
               "args": {
                 "category": "wifi",
-                "summary": "Campus-Demo will not connect despite Wi-Fi being enabled and the saved network being forgotten.",
+                "summary": "Campus-Demo will not connect even though Wi-Fi is enabled.",
                 "steps_tried": [
-                  "Enabled Wi-Fi",
-                  "Forgot the saved network"
+                  "Enabled Wi-Fi.",
+                  "Forgot the saved network."
                 ]
               }
             }
@@ -303,8 +303,8 @@
             {
               "name": "prepare_ticket",
               "result": {
-                "ticket_id": "TKT-DEMO-20261111194704-79d0",
-                "file": "outputs/tickets/S06/TKT-DEMO-20261111194704-79d0.json",
+                "ticket_id": "TKT-DEMO-20261111200057-71b9",
+                "file": "outputs/tickets/S06/TKT-DEMO-20261111200057-71b9.json",
                 "status": "draft",
                 "service_status": "operational",
                 "sent": false,
@@ -323,9 +323,9 @@
             "user memory: nothing saved for 'demo-user-a'",
             "reference file: data/service_status.json (via check_service_status)"
           ],
-          "reply": "Wi‑Fi is operational with no reported outage.\n\nI prepared a local ticket draft about Campus-Demo not connecting. It was **not sent**.\n\nFile: `outputs/tickets/S06/TKT-DEMO-20261111194704-79d0.json`",
+          "reply": "Wi-Fi is operational with no reported outage.\n\nI prepared a local ticket draft using the steps you reported:\n- Enabled Wi-Fi\n- Forgot the saved network\n\n**File:** `outputs/tickets/S06/TKT-DEMO-20261111200057-71b9.json`  \nIt was **not sent** to the helpdesk.",
           "tickets": [
-            "outputs/tickets/S06/TKT-DEMO-20261111194704-79d0.json"
+            "outputs/tickets/S06/TKT-DEMO-20261111200057-71b9.json"
           ],
           "tool_rounds": 2,
           "loop_limit_reached": false
