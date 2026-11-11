@@ -45,8 +45,8 @@
   {
     "call": "prepare_ticket(full details)",
     "result": {
-      "ticket_id": "TKT-DEMO-20261111192254-40c0",
-      "file": "outputs/tickets/direct/TKT-DEMO-20261111192254-40c0.json",
+      "ticket_id": "TKT-DEMO-20261111202412-91ba",
+      "file": "outputs/tickets/direct/TKT-DEMO-20261111202412-91ba.json",
       "status": "draft",
       "service_status": "operational",
       "sent": false,
