@@ -1,0 +1,19 @@
+{
+  "ticket": {
+    "ticket_id": "TKT-DEMO-20261111194720-fc6b",
+    "status": "draft",
+    "user_id": "demo-user-a",
+    "thread_id": "s09",
+    "category": "wifi",
+    "summary": "Wi-Fi remains unavailable after enabling Wi-Fi and trying to reconnect.",
+    "steps_tried": [
+      "Enabled Wi-Fi",
+      "Tried reconnecting"
+    ],
+    "service_status": "operational",
+    "status_profile": "normal",
+    "reference_ids": [
+      "GUIDE-WIFI"
+    ]
+  }
+}

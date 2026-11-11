@@ -1,0 +1,208 @@
+{
+  "scenario": "S07",
+  "title": "The same request during a Wi-Fi outage",
+  "part": 2,
+  "status_profile": "wifi_outage",
+  "reset_before": true,
+  "model": "openai:gpt-5.6-luna",
+  "memory_storage": "local-storage/ (not in git)",
+  "runs": [
+    {
+      "command": "python -m helpdesk chat --user demo-user-a --thread s07 --status wifi_outage -m \"I enabled Wi-Fi and forgot the saved network, but Campus-Demo still will not connect. Check whether Wi-Fi is down. If it is operating, prepare a ticket about this problem.\"",
+      "new_process_after_restart": false,
+      "exit_code": 0,
+      "process": {
+        "pid": 8821,
+        "python": "3.13.18",
+        "started_at": "2026-11-11T19:47:07+00:00"
+      },
+      "turns": [
+        {
+          "user_id": "demo-user-a",
+          "thread_id": "s07",
+          "status_profile": "wifi_outage",
+          "model": "openai:gpt-5.6-luna",
+          "user_message": "I enabled Wi-Fi and forgot the saved network, but Campus-Demo still will not connect. Check whether Wi-Fi is down. If it is operating, prepare a ticket about this problem.",
+          "nodes": [
+            "load_memory",
+            "agent",
+            "tools",
+            "agent",
+            "tools",
+            "agent"
+          ],
+          "steps": [
+            {
+              "node": "load_memory",
+              "update": {
+                "tool_rounds": 0,
+                "loop_limit_reached": false,
+                "preferred_language": null,
+                "memory": {
+                  "user_id": "demo-user-a",
+                  "user_memory_written": null,
+                  "user_memory_read": null,
+                  "conversation_messages_before_this_turn": 0
+                }
+              }
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "",
+                    "tool_calls": [
+                      {
+                        "name": "find_instructions",
+                        "args": {
+                          "topic": "wifi"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "node": "tools",
+              "update": {
+                "messages": [
+                  {
+                    "type": "tool",
+                    "content": {
+                      "topic": "wifi",
+                      "instruction_id": "GUIDE-WIFI",
+                      "title": "Connect to the practice campus network",
+                      "steps": [
+                        "Check that Wi-Fi is enabled and airplane mode is off.",
+                        "Select the fictional Campus-Demo network.",
+                        "If connection fails, forget the saved network and try connecting again.",
+                        "If the problem remains, check the service status before preparing a ticket."
+                      ],
+                      "source": "data/helpdesk.json"
+                    },
+                    "name": "find_instructions"
+                  }
+                ],
+                "tool_rounds": 1,
+                "tickets": []
+              }
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "",
+                    "tool_calls": [
+                      {
+                        "name": "check_service_status",
+                        "args": {
+                          "service": "wifi"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "node": "tools",
+              "update": {
+                "messages": [
+                  {
+                    "type": "tool",
+                    "content": {
+                      "service": "wifi",
+                      "status": "outage",
+                      "message": "The demo Wi-Fi service is unavailable across campus. The fixture gives no repair time.",
+                      "status_profile": "wifi_outage",
+                      "source": "data/service_status.json",
+                      "repair_time": null
+                    },
+                    "name": "check_service_status"
+                  }
+                ],
+                "tool_rounds": 2,
+                "tickets": []
+              }
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "Wi-Fi is currently experiencing a campus-wide outage. I did not prepare a ticket because the service is not operating. No repair time is available."
+                  }
+                ]
+              }
+            }
+          ],
+          "tool_requests": [
+            {
+              "name": "find_instructions",
+              "args": {
+                "topic": "wifi"
+              }
+            },
+            {
+              "name": "check_service_status",
+              "args": {
+                "service": "wifi"
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "name": "find_instructions",
+              "result": {
+                "topic": "wifi",
+                "instruction_id": "GUIDE-WIFI",
+                "title": "Connect to the practice campus network",
+                "steps": [
+                  "Check that Wi-Fi is enabled and airplane mode is off.",
+                  "Select the fictional Campus-Demo network.",
+                  "If connection fails, forget the saved network and try connecting again.",
+                  "If the problem remains, check the service status before preparing a ticket."
+                ],
+                "source": "data/helpdesk.json"
+              }
+            },
+            {
+              "name": "check_service_status",
+              "result": {
+                "service": "wifi",
+                "status": "outage",
+                "message": "The demo Wi-Fi service is unavailable across campus. The fixture gives no repair time.",
+                "status_profile": "wifi_outage",
+                "source": "data/service_status.json",
+                "repair_time": null
+              }
+            }
+          ],
+          "memory": {
+            "user_id": "demo-user-a",
+            "user_memory_written": null,
+            "user_memory_read": null,
+            "conversation_messages_before_this_turn": 0
+          },
+          "read_from": [
+            "conversation memory: new thread 's07', nothing earlier",
+            "user memory: nothing saved for 'demo-user-a'",
+            "reference file: data/helpdesk.json (via find_instructions)",
+            "reference file: data/service_status.json (via check_service_status)"
+          ],
+          "reply": "Wi-Fi is currently experiencing a campus-wide outage. I did not prepare a ticket because the service is not operating. No repair time is available.",
+          "tickets": [],
+          "tool_rounds": 2,
+          "loop_limit_reached": false
+        }
+      ],
+      "errors": ""
+    }
+  ]
+}

@@ -1,0 +1,140 @@
+{
+  "scenario": "S14",
+  "title": "Password recovery outage",
+  "part": 2,
+  "status_profile": "recovery_outage",
+  "reset_before": true,
+  "model": "openai:gpt-5.6-luna",
+  "memory_storage": "local-storage/ (not in git)",
+  "runs": [
+    {
+      "command": "python -m helpdesk chat --user demo-user-a --thread s14 --status recovery_outage -m \"My password recovery page is unavailable. Check the service status. Is there a known problem?\"",
+      "new_process_after_restart": false,
+      "exit_code": 0,
+      "process": {
+        "pid": 8853,
+        "python": "3.13.18",
+        "started_at": "2026-11-11T19:47:50+00:00"
+      },
+      "turns": [
+        {
+          "user_id": "demo-user-a",
+          "thread_id": "s14",
+          "status_profile": "recovery_outage",
+          "model": "openai:gpt-5.6-luna",
+          "user_message": "My password recovery page is unavailable. Check the service status. Is there a known problem?",
+          "nodes": [
+            "load_memory",
+            "agent",
+            "tools",
+            "agent"
+          ],
+          "steps": [
+            {
+              "node": "load_memory",
+              "update": {
+                "tool_rounds": 0,
+                "loop_limit_reached": false,
+                "preferred_language": null,
+                "memory": {
+                  "user_id": "demo-user-a",
+                  "user_memory_written": null,
+                  "user_memory_read": null,
+                  "conversation_messages_before_this_turn": 0
+                }
+              }
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "",
+                    "tool_calls": [
+                      {
+                        "name": "check_service_status",
+                        "args": {
+                          "service": "account_recovery"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "node": "tools",
+              "update": {
+                "messages": [
+                  {
+                    "type": "tool",
+                    "content": {
+                      "service": "account_recovery",
+                      "status": "outage",
+                      "message": "The demo account-recovery service is unavailable. The fixture gives no repair time.",
+                      "status_profile": "recovery_outage",
+                      "source": "data/service_status.json",
+                      "repair_time": null
+                    },
+                    "name": "check_service_status"
+                  }
+                ],
+                "tool_rounds": 1,
+                "tickets": []
+              }
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "The password recovery service is currently experiencing an outage, so the recovery page is unavailable. This is a known service problem. No repair time is available."
+                  }
+                ]
+              }
+            }
+          ],
+          "tool_requests": [
+            {
+              "name": "check_service_status",
+              "args": {
+                "service": "account_recovery"
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "name": "check_service_status",
+              "result": {
+                "service": "account_recovery",
+                "status": "outage",
+                "message": "The demo account-recovery service is unavailable. The fixture gives no repair time.",
+                "status_profile": "recovery_outage",
+                "source": "data/service_status.json",
+                "repair_time": null
+              }
+            }
+          ],
+          "memory": {
+            "user_id": "demo-user-a",
+            "user_memory_written": null,
+            "user_memory_read": null,
+            "conversation_messages_before_this_turn": 0
+          },
+          "read_from": [
+            "conversation memory: new thread 's14', nothing earlier",
+            "user memory: nothing saved for 'demo-user-a'",
+            "reference file: data/service_status.json (via check_service_status)"
+          ],
+          "reply": "The password recovery service is currently experiencing an outage, so the recovery page is unavailable. This is a known service problem. No repair time is available.",
+          "tickets": [],
+          "tool_rounds": 1,
+          "loop_limit_reached": false
+        }
+      ],
+      "errors": ""
+    }
+  ]
+}

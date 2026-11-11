@@ -1,0 +1,335 @@
+{
+  "scenario": "S09",
+  "title": "Missing ticket details",
+  "part": 2,
+  "status_profile": "normal",
+  "reset_before": true,
+  "model": "openai:gpt-5.6-luna",
+  "memory_storage": "local-storage/ (not in git)",
+  "runs": [
+    {
+      "command": "python -m helpdesk chat --user demo-user-a --thread s09 --status normal -m \"Prepare a support ticket.\" -m \"The issue is Wi-Fi. I enabled it and tried reconnecting, but it still fails.\"",
+      "new_process_after_restart": false,
+      "exit_code": 0,
+      "process": {
+        "pid": 8827,
+        "python": "3.13.18",
+        "started_at": "2026-11-11T19:47:15+00:00"
+      },
+      "turns": [
+        {
+          "user_id": "demo-user-a",
+          "thread_id": "s09",
+          "status_profile": "normal",
+          "model": "openai:gpt-5.6-luna",
+          "user_message": "Prepare a support ticket.",
+          "nodes": [
+            "load_memory",
+            "agent"
+          ],
+          "steps": [
+            {
+              "node": "load_memory",
+              "update": {
+                "tool_rounds": 0,
+                "loop_limit_reached": false,
+                "preferred_language": null,
+                "memory": {
+                  "user_id": "demo-user-a",
+                  "user_memory_written": null,
+                  "user_memory_read": null,
+                  "conversation_messages_before_this_turn": 0
+                }
+              }
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "What problem should the ticket describe—Wi‑Fi or password recovery? Please also list the troubleshooting steps you have already tried. A ticket requires both, and it will be saved as a local draft only, not sent."
+                  }
+                ]
+              }
+            }
+          ],
+          "tool_requests": [],
+          "tool_results": [],
+          "memory": {
+            "user_id": "demo-user-a",
+            "user_memory_written": null,
+            "user_memory_read": null,
+            "conversation_messages_before_this_turn": 0
+          },
+          "read_from": [
+            "conversation memory: new thread 's09', nothing earlier",
+            "user memory: nothing saved for 'demo-user-a'"
+          ],
+          "reply": "What problem should the ticket describe—Wi‑Fi or password recovery? Please also list the troubleshooting steps you have already tried. A ticket requires both, and it will be saved as a local draft only, not sent.",
+          "tickets": [],
+          "tool_rounds": 0,
+          "loop_limit_reached": false
+        },
+        {
+          "user_id": "demo-user-a",
+          "thread_id": "s09",
+          "status_profile": "normal",
+          "model": "openai:gpt-5.6-luna",
+          "user_message": "The issue is Wi-Fi. I enabled it and tried reconnecting, but it still fails.",
+          "nodes": [
+            "load_memory",
+            "agent",
+            "tools",
+            "agent",
+            "tools",
+            "agent",
+            "tools",
+            "agent"
+          ],
+          "steps": [
+            {
+              "node": "load_memory",
+              "update": {
+                "tool_rounds": 0,
+                "loop_limit_reached": false,
+                "preferred_language": null,
+                "memory": {
+                  "user_id": "demo-user-a",
+                  "user_memory_written": null,
+                  "user_memory_read": null,
+                  "conversation_messages_before_this_turn": 2
+                }
+              }
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "",
+                    "tool_calls": [
+                      {
+                        "name": "find_instructions",
+                        "args": {
+                          "topic": "wifi"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "node": "tools",
+              "update": {
+                "messages": [
+                  {
+                    "type": "tool",
+                    "content": {
+                      "topic": "wifi",
+                      "instruction_id": "GUIDE-WIFI",
+                      "title": "Connect to the practice campus network",
+                      "steps": [
+                        "Check that Wi-Fi is enabled and airplane mode is off.",
+                        "Select the fictional Campus-Demo network.",
+                        "If connection fails, forget the saved network and try connecting again.",
+                        "If the problem remains, check the service status before preparing a ticket."
+                      ],
+                      "source": "data/helpdesk.json"
+                    },
+                    "name": "find_instructions"
+                  }
+                ],
+                "tool_rounds": 1,
+                "tickets": []
+              }
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "",
+                    "tool_calls": [
+                      {
+                        "name": "check_service_status",
+                        "args": {
+                          "service": "wifi"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "node": "tools",
+              "update": {
+                "messages": [
+                  {
+                    "type": "tool",
+                    "content": {
+                      "service": "wifi",
+                      "status": "operational",
+                      "message": "The demo Wi-Fi service has no reported outage.",
+                      "status_profile": "normal",
+                      "source": "data/service_status.json",
+                      "repair_time": null
+                    },
+                    "name": "check_service_status"
+                  }
+                ],
+                "tool_rounds": 2,
+                "tickets": []
+              }
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "",
+                    "tool_calls": [
+                      {
+                        "name": "prepare_ticket",
+                        "args": {
+                          "category": "wifi",
+                          "summary": "Wi-Fi remains unavailable after enabling Wi-Fi and trying to reconnect.",
+                          "steps_tried": [
+                            "Enabled Wi-Fi",
+                            "Tried reconnecting"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "node": "tools",
+              "update": {
+                "messages": [
+                  {
+                    "type": "tool",
+                    "content": {
+                      "ticket_id": "TKT-DEMO-20261111194720-fc6b",
+                      "file": "outputs/tickets/S09/TKT-DEMO-20261111194720-fc6b.json",
+                      "status": "draft",
+                      "service_status": "operational",
+                      "sent": false,
+                      "note": "Local draft only; nothing was sent to a helpdesk."
+                    },
+                    "name": "prepare_ticket"
+                  }
+                ],
+                "tool_rounds": 3,
+                "tickets": [
+                  "outputs/tickets/S09/TKT-DEMO-20261111194720-fc6b.json"
+                ]
+              }
+            },
+            {
+              "node": "agent",
+              "update": {
+                "messages": [
+                  {
+                    "type": "ai",
+                    "content": "The Wi‑Fi service is operational, so I prepared a local support ticket draft.\n\n- **Ticket ID:** TKT-DEMO-20261111194720-fc6b\n- **File:** `outputs/tickets/S09/TKT-DEMO-20261111194720-fc6b.json`\n- **Status:** Not sent; local draft only"
+                  }
+                ]
+              }
+            }
+          ],
+          "tool_requests": [
+            {
+              "name": "find_instructions",
+              "args": {
+                "topic": "wifi"
+              }
+            },
+            {
+              "name": "check_service_status",
+              "args": {
+                "service": "wifi"
+              }
+            },
+            {
+              "name": "prepare_ticket",
+              "args": {
+                "category": "wifi",
+                "summary": "Wi-Fi remains unavailable after enabling Wi-Fi and trying to reconnect.",
+                "steps_tried": [
+                  "Enabled Wi-Fi",
+                  "Tried reconnecting"
+                ]
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "name": "find_instructions",
+              "result": {
+                "topic": "wifi",
+                "instruction_id": "GUIDE-WIFI",
+                "title": "Connect to the practice campus network",
+                "steps": [
+                  "Check that Wi-Fi is enabled and airplane mode is off.",
+                  "Select the fictional Campus-Demo network.",
+                  "If connection fails, forget the saved network and try connecting again.",
+                  "If the problem remains, check the service status before preparing a ticket."
+                ],
+                "source": "data/helpdesk.json"
+              }
+            },
+            {
+              "name": "check_service_status",
+              "result": {
+                "service": "wifi",
+                "status": "operational",
+                "message": "The demo Wi-Fi service has no reported outage.",
+                "status_profile": "normal",
+                "source": "data/service_status.json",
+                "repair_time": null
+              }
+            },
+            {
+              "name": "prepare_ticket",
+              "result": {
+                "ticket_id": "TKT-DEMO-20261111194720-fc6b",
+                "file": "outputs/tickets/S09/TKT-DEMO-20261111194720-fc6b.json",
+                "status": "draft",
+                "service_status": "operational",
+                "sent": false,
+                "note": "Local draft only; nothing was sent to a helpdesk."
+              }
+            }
+          ],
+          "memory": {
+            "user_id": "demo-user-a",
+            "user_memory_written": null,
+            "user_memory_read": null,
+            "conversation_messages_before_this_turn": 2
+          },
+          "read_from": [
+            "conversation memory: 2 earlier messages of thread 's09'",
+            "user memory: nothing saved for 'demo-user-a'",
+            "reference file: data/helpdesk.json (via find_instructions)",
+            "reference file: data/service_status.json (via check_service_status)"
+          ],
+          "reply": "The Wi‑Fi service is operational, so I prepared a local support ticket draft.\n\n- **Ticket ID:** TKT-DEMO-20261111194720-fc6b\n- **File:** `outputs/tickets/S09/TKT-DEMO-20261111194720-fc6b.json`\n- **Status:** Not sent; local draft only",
+          "tickets": [
+            "outputs/tickets/S09/TKT-DEMO-20261111194720-fc6b.json"
+          ],
+          "tool_rounds": 3,
+          "loop_limit_reached": false
+        }
+      ],
+      "errors": ""
+    }
+  ]
+}
